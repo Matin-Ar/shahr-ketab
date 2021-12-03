@@ -14,6 +14,10 @@ function App() {
   const [nevisande, setNevisande] = useState([]);
   const [editbook, setEditBook] = useState(false);
 
+  const [factorList, setFactorList] = useState([]);
+
+  const [selectedTab, setSelectedTab] = useState(1);
+
   const [title, setTitle] = useState("");
   const [writer, setWriter] = useState("");
   const [topic, setTopic] = useState("");
@@ -49,8 +53,18 @@ function App() {
   useEffect(() => {
     axios
       .get("/api/book")
-      .then((res) => setBooksList(res.data))
+      .then((res) => {
+        setBooksList(res.data);
+        console.log(res.data);
+      })
       .catch((err) => console.log(err));
+
+    axios
+      .get("/api/factor")
+      .then((res) => setFactorList(res.data))
+      .catch((err) => console.log(err));
+
+    console.log(factorList);
     setCount(booksList.lenght);
   }, [count]);
 
@@ -187,12 +201,13 @@ function App() {
   return (
     <>
       <div className="App">
-        <Menu />
+        <Menu setSelectedTab={setSelectedTab} />
 
         <div className="scroll">
           <div className="main-wrapper">
             {booksList.lenght && <h1>number of books {`${count}`}</h1>}
             {booksList &&
+              selectedTab == 1 &&
               booksList.map((book) => {
                 return (
                   <div className="book-wrapper" key={book._id}>
@@ -203,7 +218,7 @@ function App() {
                       </div>
 
                       <div className="book-group">
-                        {book.topic.map((num, index) => (
+                        {book.topic?.map((num, index) => (
                           <>
                             <h2 className="group-label">
                               {" "}
@@ -607,6 +622,23 @@ function App() {
               <button className="sendbtn" onClick={handleEditBook}>
                 ویرایش کتاب
               </button>
+            </div>
+          )}
+
+          {/*factor page*/}
+          {selectedTab == 2 && (
+            <div>
+              {factorList &&
+                factorList.map((factor) => {
+                  return (
+                    <div className="factor-group-wrapper">
+                      <div className="book-group">
+                        <h2 className="group-label">نام مشتری</h2>
+                        <h2 className="group-value">{factor.customer._id}</h2>
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           )}
         </div>
