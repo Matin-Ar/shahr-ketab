@@ -13,11 +13,11 @@ const factorSchema = new mongoose.Schema({
             required: true,
             trim: true
         },
-        c_phone: [{
+        c_phone: {
             type: String,
             required: true,
             trim: true
-        }],
+        },
         c_address: {
             type: String,
             required: true,

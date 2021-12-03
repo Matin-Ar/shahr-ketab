@@ -4,6 +4,7 @@ const router = new express.Router()
 
 router.post('/book', async (req, res) => {
     try {
+        req.body.writer = req.body.writer.split(', ')
         const book = new Book(req.body)
         await book.save()
         res.status(201).send(book)

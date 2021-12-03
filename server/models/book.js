@@ -12,11 +12,11 @@ const bookSchema = new mongoose.Schema({
         required: true,
         trim: true
     }],
-    topic: [{
+    topic: {
         type: String,
         required: true,
         trim: true
-    }],
+    },
     purchase_pirce: {
         type: String,
         required: true,
