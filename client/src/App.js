@@ -70,6 +70,7 @@ function App() {
   const [Edite_name, setEdite_name] = useState("");
   const [Edite_phone, setEdite_phone] = useState("");
   const [Editgender, setEditgender] = useState("");
+  const [Edit_id, setEdit_id] = useState("");
 
   const [selectboxCount, setSelectBoxCount] = useState([1]);
   const [sellArr, setSellArr] = useState([{}]);
@@ -257,9 +258,70 @@ function App() {
     setEditBook(true);
   };
 
-  const handlemyEditFactor = () => {
+  const handleEditedFactor = () => {
+    if (
+      EditfactorDate &&
+      Edite_name &&
+      Editc_address &&
+      Editc_phone &&
+      Editc_name &&
+      Edite_phone &&
+      Editgender
+    ) {
+      const foodata = {
+        date_factor: EditfactorDate,
+        customer: {
+          c_name: Editc_name,
+          c_phone: Editc_phone,
+          c_address: Editc_address,
+        },
+        employee: {
+          e_name: Edite_name,
+          e_phone: Edite_phone,
+          gender: Editgender,
+        },
+      };
+
+      axios
+        .patch(`/api/factor/${Edit_id}`, foodata)
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            alertify.success("با موفقیت ویرایش گردید");
+            forceUpdate();
+
+            setCount(count++);
+
+            setEditFactorMode(false);
+          }
+        })
+        .catch((err) => alertify.error(err));
+    } else {
+      alertify.error("لطفا تمامی فیلد ها را وارد نمایید");
+    }
+  };
+
+  const handlemyEditFactor = (
+    date_factor,
+    e_name,
+    e_phone,
+    gender,
+    c_name,
+    c_phone,
+    c_address,
+    id
+  ) => {
     setEditFactorMode(!EditFactorMode);
     console.log(EditFactorMode);
+
+    setEditFactorDate(date_factor);
+    setEdite_name(e_name);
+    setEdite_phone(e_phone);
+    setEditgender(gender);
+    setEditc_name(c_name);
+    setEditc_phone(c_phone);
+    setEditc_address(c_address);
+    setEdit_id(id);
   };
 
   const handleEditBook = () => {
@@ -746,7 +808,18 @@ function App() {
                         </button>
                         <button
                           className="button yellow"
-                          onClick={handlemyEditFactor}
+                          onClick={(e) =>
+                            handlemyEditFactor(
+                              factor.date_factor,
+                              factor.employee.e_name,
+                              factor.employee.e_phone,
+                              factor.employee.gender,
+                              factor.customer.c_name,
+                              factor.customer.c_phone,
+                              factor.customer.c_address,
+                              factor._id
+                            )
+                          }
                         >
                           ویرایش
                         </button>
@@ -810,8 +883,7 @@ function App() {
                       </div>
 
                       <div className="add-book-btn-wrapper">
-                        {" "}
-                        {selectedTab == 2 && (
+                        {selectedTab == 2 && !EditFactorMode && (
                           <button
                             className={`add-book-btn ${
                               !showAddFactor ? "greena" : "reda"
@@ -821,21 +893,21 @@ function App() {
                             {!showAddFactor ? "افزودن فاکتور" : "بستن پنجره"}
                           </button>
                         )}
-                        {editbook && !showAddBook && (
+
+                        {selectedTab == 2 && EditFactorMode && (
                           <button
-                            className={`add-book-btn ${
-                              !showAddBook ? "greena" : "reda"
-                            }`}
-                            onClick={() => setEditBook(!editbook)}
+                            className="add-book-btn reda"
+                            onClick={() => setEditFactorMode(false)}
                           >
-                            {!editbook ? "ویرایش کتاب" : " بستن پنجره ویرایش"}
+                            بستن پنجره
                           </button>
                         )}
                       </div>
+
                       {selectedTab == 2 && !EditFactorMode && (
                         <div
                           className={`add-factor-wrapper ${
-                            EditFactorMode ? "show" : "hide"
+                            showAddFactor ? "show" : "hide"
                           }`}
                         >
                           <div className="add-book-input-group">
@@ -1094,78 +1166,11 @@ function App() {
                             </label>
                           </div>
 
-                          <hr />
-
-                          <div className="factor-sell-wrapper">
-                            <h6 className="factor-sell-title">
-                              محصولات فروخته شده
-                            </h6>
-
-                            {selectboxCount?.map((box, index) => {
-                              return (
-                                <div className="mywrapper">
-                                  <select
-                                    name="books"
-                                    id="books"
-                                    onChange={(e) =>
-                                      handleSelection(e.target.value, index)
-                                    }
-                                  >
-                                    {booksList.map((book) => {
-                                      return (
-                                        <option value={book._id}>
-                                          {book.title}
-                                        </option>
-                                      );
-                                    })}
-                                  </select>
-
-                                  <div className="add-book-input-group">
-                                    <label className="add-book-input-label">
-                                      قیمت فروش
-                                      <input
-                                        type="text"
-                                        className="add-book-input"
-                                        value={sellArr[index].sale_price}
-                                        onChange={(e) =>
-                                          handleChangePrice(
-                                            e.target.value,
-                                            index
-                                          )
-                                        }
-                                      />
-                                    </label>
-                                  </div>
-
-                                  <div className="add-book-input-group">
-                                    <label className="add-book-input-label">
-                                      تعداد فروش
-                                      <input
-                                        type="text"
-                                        className="add-book-input"
-                                        value={sellArr[index].count}
-                                        onChange={(e) =>
-                                          handleChangeCount(
-                                            e.target.value,
-                                            index
-                                          )
-                                        }
-                                      />
-                                    </label>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
                           <button
-                            onClick={handleAddProduct}
-                            className="button btnb"
+                            className="sendbtn"
+                            onClick={handleEditedFactor}
                           >
-                            افزودن محصول جدید
-                          </button>
-
-                          <button className="sendbtn" onClick={handleAddFactor}>
-                            ارسال فاکتور به دیتابیس
+                            ارسال فاکتور ویرایش شده به دیتابیس
                           </button>
                         </div>
                       )}
