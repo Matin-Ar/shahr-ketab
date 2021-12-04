@@ -136,15 +136,15 @@ body {
 .add-book-wrapper {
   position: fixed;
   direction: rtl;
-
+  top: 0;
   bottom: 0;
-  height: 600px;
   background-color: rgba(0, 0, 0, 0.7);
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  z-index: 99;
 }
 .add-book-input-group {
   width: 500px;
@@ -163,6 +163,7 @@ body {
   outline: none;
   border: none;
   padding-right: 10px;
+  margin-top: 10px;
 }
 
 .hide {
@@ -230,6 +231,8 @@ body {
   margin: 1em;
   padding: 1em;
   border: 1px solid blueviolet;
+
+  position: relative;
 }
 
 .factor-title {

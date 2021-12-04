@@ -60,10 +60,18 @@ function App() {
   const [e_name, sete_name] = useState("");
   const [e_phone, sete_phone] = useState("");
   const [gender, setgender] = useState("");
+
+  const [EditFactorMode, setEditFactorMode] = useState(false);
+  const [EditfactorDate, setEditFactorDate] = useState("");
+  const [Editc_name, setEditc_name] = useState("");
+  const [Editc_phone, setEditc_phone] = useState("");
+  const [Editc_address, setEditc_address] = useState("");
+
+  const [Edite_name, setEdite_name] = useState("");
+  const [Edite_phone, setEdite_phone] = useState("");
+  const [Editgender, setEditgender] = useState("");
+
   const [selectboxCount, setSelectBoxCount] = useState([1]);
-
-  const [SelectionArr, setSelectionArr] = useState([]);
-
   const [sellArr, setSellArr] = useState([{}]);
 
   useEffect(() => {
@@ -89,6 +97,17 @@ function App() {
   const handleDeleteBook = (bookid) => {
     axios
       .delete(`/api/book/${bookid}`)
+      .then(() => alertify.success("با موفقیت حذف گردید"))
+      .catch((err) => alertify.error(err.response.data.detail));
+
+    forceUpdate();
+
+    setCount(count++);
+  };
+
+  const handleDeleteFactor = (factorId) => {
+    axios
+      .delete(`/api/factor/${factorId}`)
       .then(() => alertify.success("با موفقیت حذف گردید"))
       .catch((err) => alertify.error(err.response.data.detail));
 
@@ -238,6 +257,11 @@ function App() {
     setEditBook(true);
   };
 
+  const handlemyEditFactor = () => {
+    setEditFactorMode(!EditFactorMode);
+    console.log(EditFactorMode);
+  };
+
   const handleEditBook = () => {
     if (
       Edittitle &&
@@ -285,6 +309,8 @@ function App() {
       alertify.error("لطفا تمامی فیلد ها را وارد نمایید");
     }
   };
+
+  const handleEditFactor = () => {};
 
   return (
     <>
@@ -711,6 +737,21 @@ function App() {
                 factorList.map((factor) => {
                   return (
                     <div className="factor-group-wrapper">
+                      <div className="actions-div">
+                        <button
+                          className="button red"
+                          onClick={() => handleDeleteFactor(factor._id)}
+                        >
+                          حذف
+                        </button>
+                        <button
+                          className="button yellow"
+                          onClick={handlemyEditFactor}
+                        >
+                          ویرایش
+                        </button>
+                      </div>
+
                       <h1 className="factor-title">
                         اطلاعات شماره فاکتور {`${factor._id}`}
                       </h1>
@@ -791,165 +832,343 @@ function App() {
                           </button>
                         )}
                       </div>
-
-                      <div
-                        className={`add-factor-wrapper ${
-                          showAddFactor ? "show" : "hide"
-                        }`}
-                      >
-                        <div className="add-book-input-group">
-                          <label className="add-book-input-label">
-                            تاریخ فاکتور
-                            <input
-                              type="text"
-                              className="add-book-input"
-                              value={factorDate}
-                              onChange={(e) => setFactorDate(e.target.value)}
-                            />
-                          </label>
-                        </div>
-
-                        <div className="add-book-input-group">
-                          <label className="add-book-input-label">
-                            نام مشتری
-                            <input
-                              type="text"
-                              className="add-book-input"
-                              value={c_name}
-                              onChange={(e) => setc_name(e.target.value)}
-                            />
-                          </label>
-                        </div>
-
-                        <div className="add-book-input-group">
-                          <label className="add-book-input-label">
-                            شماره همراه مشتری
-                            <input
-                              type="text"
-                              className="add-book-input"
-                              value={c_phone}
-                              onChange={(e) => setc_phone(e.target.value)}
-                            />
-                          </label>
-                        </div>
-
-                        <div className="add-book-input-group">
-                          <label className="add-book-input-label">
-                            آدرس مشتری
-                            <input
-                              type="text"
-                              className="add-book-input"
-                              value={c_address}
-                              onChange={(e) => setc_address(e.target.value)}
-                            />
-                          </label>
-                        </div>
-
-                        <div className="add-book-input-group">
-                          <label className="add-book-input-label">
-                            نام کارمند
-                            <input
-                              type="text"
-                              className="add-book-input"
-                              value={e_name}
-                              onChange={(e) => sete_name(e.target.value)}
-                            />
-                          </label>
-                        </div>
-
-                        <div className="add-book-input-group">
-                          <label className="add-book-input-label">
-                            شماره همراه کارمند
-                            <input
-                              type="number"
-                              className="add-book-input"
-                              value={e_phone}
-                              onChange={(e) => sete_phone(e.target.value)}
-                              placeHolder="فقط عدد میتوان وارد نمود"
-                            />
-                          </label>
-                        </div>
-
-                        <div className="add-book-input-group">
-                          <label className="add-book-input-label">
-                            جنسیت
-                            <input
-                              type="text"
-                              className="add-book-input"
-                              value={gender}
-                              onChange={(e) => setgender(e.target.value)}
-                            />
-                          </label>
-                        </div>
-
-                        <hr />
-
-                        <div className="factor-sell-wrapper">
-                          <h6 className="factor-sell-title">
-                            محصولات فروخته شده
-                          </h6>
-
-                          {selectboxCount?.map((box, index) => {
-                            return (
-                              <div className="mywrapper">
-                                <select
-                                  name="books"
-                                  id="books"
-                                  onChange={(e) =>
-                                    handleSelection(e.target.value, index)
-                                  }
-                                >
-                                  {booksList.map((book) => {
-                                    return (
-                                      <option value={book._id}>
-                                        {book.title}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-
-                                <div className="add-book-input-group">
-                                  <label className="add-book-input-label">
-                                    قیمت فروش
-                                    <input
-                                      type="text"
-                                      className="add-book-input"
-                                      value={sellArr[index].sale_price}
-                                      onChange={(e) =>
-                                        handleChangePrice(e.target.value, index)
-                                      }
-                                    />
-                                  </label>
-                                </div>
-
-                                <div className="add-book-input-group">
-                                  <label className="add-book-input-label">
-                                    تعداد فروش
-                                    <input
-                                      type="text"
-                                      className="add-book-input"
-                                      value={sellArr[index].count}
-                                      onChange={(e) =>
-                                        handleChangeCount(e.target.value, index)
-                                      }
-                                    />
-                                  </label>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <button
-                          onClick={handleAddProduct}
-                          className="button btnb"
+                      {selectedTab == 2 && !EditFactorMode && (
+                        <div
+                          className={`add-factor-wrapper ${
+                            EditFactorMode ? "show" : "hide"
+                          }`}
                         >
-                          افزودن محصول جدید
-                        </button>
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              تاریخ فاکتور
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={factorDate}
+                                onChange={(e) => setFactorDate(e.target.value)}
+                              />
+                            </label>
+                          </div>
 
-                        <button className="sendbtn" onClick={handleAddFactor}>
-                          ارسال فاکتور به دیتابیس
-                        </button>
-                      </div>
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              نام مشتری
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={c_name}
+                                onChange={(e) => setc_name(e.target.value)}
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              شماره همراه مشتری
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={c_phone}
+                                onChange={(e) => setc_phone(e.target.value)}
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              آدرس مشتری
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={c_address}
+                                onChange={(e) => setc_address(e.target.value)}
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              نام کارمند
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={e_name}
+                                onChange={(e) => sete_name(e.target.value)}
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              شماره همراه کارمند
+                              <input
+                                type="number"
+                                className="add-book-input"
+                                value={e_phone}
+                                onChange={(e) => sete_phone(e.target.value)}
+                                placeHolder="فقط عدد میتوان وارد نمود"
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              جنسیت
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={gender}
+                                onChange={(e) => setgender(e.target.value)}
+                              />
+                            </label>
+                          </div>
+
+                          <hr />
+
+                          <div className="factor-sell-wrapper">
+                            <h6 className="factor-sell-title">
+                              محصولات فروخته شده
+                            </h6>
+
+                            {selectboxCount?.map((box, index) => {
+                              return (
+                                <div className="mywrapper">
+                                  <select
+                                    name="books"
+                                    id="books"
+                                    onChange={(e) =>
+                                      handleSelection(e.target.value, index)
+                                    }
+                                  >
+                                    {booksList.map((book) => {
+                                      return (
+                                        <option value={book._id}>
+                                          {book.title}
+                                        </option>
+                                      );
+                                    })}
+                                  </select>
+
+                                  <div className="add-book-input-group">
+                                    <label className="add-book-input-label">
+                                      قیمت فروش
+                                      <input
+                                        type="text"
+                                        className="add-book-input"
+                                        value={sellArr[index].sale_price}
+                                        onChange={(e) =>
+                                          handleChangePrice(
+                                            e.target.value,
+                                            index
+                                          )
+                                        }
+                                      />
+                                    </label>
+                                  </div>
+
+                                  <div className="add-book-input-group">
+                                    <label className="add-book-input-label">
+                                      تعداد فروش
+                                      <input
+                                        type="text"
+                                        className="add-book-input"
+                                        value={sellArr[index].count}
+                                        onChange={(e) =>
+                                          handleChangeCount(
+                                            e.target.value,
+                                            index
+                                          )
+                                        }
+                                      />
+                                    </label>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <button
+                            onClick={handleAddProduct}
+                            className="button btnb"
+                          >
+                            افزودن محصول جدید
+                          </button>
+
+                          <button className="sendbtn" onClick={handleAddFactor}>
+                            ارسال فاکتور به دیتابیس
+                          </button>
+                        </div>
+                      )}
+
+                      {selectedTab == 2 && (
+                        <div
+                          className={`add-factor-wrapper ${
+                            EditFactorMode ? "show" : "hide"
+                          }`}
+                        >
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              تاریخ فاکتور
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={EditfactorDate}
+                                onChange={(e) =>
+                                  setEditFactorDate(e.target.value)
+                                }
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              نام مشتری
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={Editc_name}
+                                onChange={(e) => setEditc_name(e.target.value)}
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              شماره همراه مشتری
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={Editc_phone}
+                                onChange={(e) => setEditc_phone(e.target.value)}
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              آدرس مشتری
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={Editc_address}
+                                onChange={(e) =>
+                                  setEditc_address(e.target.value)
+                                }
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              نام کارمند
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={Edite_name}
+                                onChange={(e) => setEdite_name(e.target.value)}
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              شماره همراه کارمند
+                              <input
+                                type="number"
+                                className="add-book-input"
+                                value={Edite_phone}
+                                onChange={(e) => setEdite_phone(e.target.value)}
+                                placeHolder="فقط عدد میتوان وارد نمود"
+                              />
+                            </label>
+                          </div>
+
+                          <div className="add-book-input-group">
+                            <label className="add-book-input-label">
+                              جنسیت
+                              <input
+                                type="text"
+                                className="add-book-input"
+                                value={Editgender}
+                                onChange={(e) => setEditgender(e.target.value)}
+                              />
+                            </label>
+                          </div>
+
+                          <hr />
+
+                          <div className="factor-sell-wrapper">
+                            <h6 className="factor-sell-title">
+                              محصولات فروخته شده
+                            </h6>
+
+                            {selectboxCount?.map((box, index) => {
+                              return (
+                                <div className="mywrapper">
+                                  <select
+                                    name="books"
+                                    id="books"
+                                    onChange={(e) =>
+                                      handleSelection(e.target.value, index)
+                                    }
+                                  >
+                                    {booksList.map((book) => {
+                                      return (
+                                        <option value={book._id}>
+                                          {book.title}
+                                        </option>
+                                      );
+                                    })}
+                                  </select>
+
+                                  <div className="add-book-input-group">
+                                    <label className="add-book-input-label">
+                                      قیمت فروش
+                                      <input
+                                        type="text"
+                                        className="add-book-input"
+                                        value={sellArr[index].sale_price}
+                                        onChange={(e) =>
+                                          handleChangePrice(
+                                            e.target.value,
+                                            index
+                                          )
+                                        }
+                                      />
+                                    </label>
+                                  </div>
+
+                                  <div className="add-book-input-group">
+                                    <label className="add-book-input-label">
+                                      تعداد فروش
+                                      <input
+                                        type="text"
+                                        className="add-book-input"
+                                        value={sellArr[index].count}
+                                        onChange={(e) =>
+                                          handleChangeCount(
+                                            e.target.value,
+                                            index
+                                          )
+                                        }
+                                      />
+                                    </label>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <button
+                            onClick={handleAddProduct}
+                            className="button btnb"
+                          >
+                            افزودن محصول جدید
+                          </button>
+
+                          <button className="sendbtn" onClick={handleAddFactor}>
+                            ارسال فاکتور به دیتابیس
+                          </button>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
