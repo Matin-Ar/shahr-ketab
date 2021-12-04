@@ -156,7 +156,7 @@ body {
 }
 
 .add-book-input {
-  width: 80%;
+  min-width: 500px;
   height: 25px;
   margin-right: 10px;
   border-radius: 10px;
@@ -223,4 +223,60 @@ body {
   background-color: rgb(141, 20, 255);
   color: white;
   border: none;
+}
+
+.factor-group-wrapper {
+  direction: rtl;
+  margin: 1em;
+  padding: 1em;
+  border: 1px solid blueviolet;
+}
+
+.factor-title {
+  font-size: 16px;
+  margin-top: 10px;
+  color: blueviolet;
+  margin-bottom: 10px;
+}
+
+.add-factor-wrapper {
+  position: fixed;
+  direction: rtl;
+
+  bottom: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  overflow-y: scroll;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.factor-sell-title {
+  color: white;
+}
+
+.factor-sell-wrapper {
+  width: 80%;
+  margin-top: 1em;
+  min-height: 50px;
+  display: flex;
+  max-height: 500px;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.mywrapper {
+  border: 1px solid blueviolet;
+  margin-top: 10px;
+  color: black;
+  background-color: darkslategrey;
+}
+
+.btnb {
+  margin-top: 10px;
 }
